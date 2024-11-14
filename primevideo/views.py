@@ -1,12 +1,12 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, SetPasswordForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.db.models import Q
 from .models import Movie, Series, UserContentStatus, Genre
-from .forms import MovieForm, SeriesForm, UserProfileForm
+from .forms import MovieForm, SeriesForm, UserProfileForm, UserUpdateForm
 from django.contrib import messages
 import matplotlib
 matplotlib.use('Agg')
@@ -71,7 +71,7 @@ def signout(request):
 
 # _____Funciones Administrador Usuario_____
 
-# Función de administrar usuarios
+# Función de Administrar Usuarios 
 @login_required
 @user_passes_test(lambda u: u.is_staff) # usar solo por admin
 def manage_users(request):
@@ -79,7 +79,7 @@ def manage_users(request):
     return render(request, 'manage_users.html', {'users': users})
 # Función de crear usuario
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.is_staff) # usar solo por admin
 def create_user(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -91,20 +91,23 @@ def create_user(request):
     return render(request, 'create_user.html', {'form': form})
 # Función de actualizar usuario
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.is_staff)  # Solo los administradores pueden acceder
 def update_user(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=user)
+        form = UserUpdateForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('manage_users')
+            messages.success(request, 'User updated successfully!')
+            return redirect('manage_users')  # Cambia 'manage_users' por la URL adecuada
+        else:
+            messages.error(request, 'Error updating user. Please correct the errors below.')
     else:
-        form = UserProfileForm(instance=user)
+        form = UserUpdateForm(instance=user)
     return render(request, 'update_user.html', {'form': form, 'user': user})
 # Función de eliminar usuario
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.is_staff) # usar solo por admin
 def delete_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     if request.method == 'POST':
@@ -113,7 +116,7 @@ def delete_user(request, user_id):
     return render(request, 'delete_user.html', {'user': user})
 # Función de cambiar contraseña de administrador
 @login_required
-@user_passes_test(lambda u: u.is_staff)
+@user_passes_test(lambda u: u.is_staff) # usar solo por admin
 def change_password_admin(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     if request.method == 'POST':
@@ -124,7 +127,9 @@ def change_password_admin(request, user_id):
     else:
         form = SetPasswordForm(user)
     return render(request, 'change_password_admin.html', {'form': form, 'user': user})
-# Función de cambiar contraseña de usuario, usar cliente
+
+#__Usuarios o clientes__
+# Función de cambiar contraseña de usuario
 @login_required
 def change_password_user(request):
     if request.method == 'POST':
@@ -139,14 +144,16 @@ def change_password_user(request):
 @login_required
 def update_profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=request.user)
+        form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('settings')
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')  # Cambia 'profile' por la URL adecuada
+        else:
+            messages.error(request, 'Error updating profile. Please correct the errors below.')
     else:
-        form = UserProfileForm(instance=request.user)
+        form = UserUpdateForm(instance=request.user)
     return render(request, 'update_profile.html', {'form': form})
-
 
 # _____Funciones Genre_____
 
@@ -384,12 +391,9 @@ def search(request):
     })
 
 # _____Funciones Settings_____
-
 # Función de vista de ajustes 
 def settings_view(request):
     return render(request, 'settings.html')
-
-
 
 #_____Funciones Graficos Usuario & Administrador_____
 
@@ -421,8 +425,6 @@ def user_content_graph(request):
     graphic = graphic.decode('utf-8')
 
     return render(request, 'user_content_graph.html', {'graphic': graphic})
-
-
 # Función de grafico de contenido visto por administrador
 @login_required
 @user_passes_test(lambda u: u.is_staff)
