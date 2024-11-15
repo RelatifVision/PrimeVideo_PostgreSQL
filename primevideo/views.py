@@ -76,7 +76,7 @@ def signout(request):
 @user_passes_test(lambda u: u.is_staff) # usar solo por admin
 def manage_users(request):
     users = User.objects.all()
-    return render(request, 'manage_users.html', {'users': users})
+    return render(request, 'manage/manage_users.html', {'users': users})
 # Función de crear usuario
 @login_required
 @user_passes_test(lambda u: u.is_staff) # usar solo por admin
@@ -88,7 +88,7 @@ def create_user(request):
             return redirect('manage_users')
     else:
         form = UserCreationForm()
-    return render(request, 'create_user.html', {'form': form})
+    return render(request, 'manage/create_user.html', {'form': form})
 # Función de actualizar usuario
 @login_required
 @user_passes_test(lambda u: u.is_staff)  # Solo los administradores pueden acceder
@@ -104,7 +104,7 @@ def update_user(request, user_id):
             messages.error(request, 'Error updating user. Please correct the errors below.')
     else:
         form = UserUpdateForm(instance=user)
-    return render(request, 'update_user.html', {'form': form, 'user': user})
+    return render(request, 'manage/update_user.html', {'form': form, 'user': user})
 # Función de eliminar usuario
 @login_required
 @user_passes_test(lambda u: u.is_staff) # usar solo por admin
@@ -113,7 +113,7 @@ def delete_user(request, user_id):
     if request.method == 'POST':
         user.delete()
         return redirect('manage_users')
-    return render(request, 'delete_user.html', {'user': user})
+    return render(request, 'manage/delete_user.html', {'user': user})
 # Función de cambiar contraseña de administrador
 @login_required
 @user_passes_test(lambda u: u.is_staff) # usar solo por admin
@@ -397,7 +397,7 @@ def settings_view(request):
 
 #_____Funciones Graficos Usuario & Administrador_____
 
-# Función de grafico de contenido visto por usuario
+# Función de grafico de contenido visto por usuario, crear función pasar usuarío y te cree gráfica
 @login_required
 def user_content_graph(request):
     user = request.user
@@ -425,7 +425,7 @@ def user_content_graph(request):
     graphic = graphic.decode('utf-8')
 
     return render(request, 'user_content_graph.html', {'graphic': graphic})
-# Función de grafico de contenido visto por administrador
+# Función de grafico de contenido visto por administrador, usar la anterior y replicar a all
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def admin_content_graph(request):
