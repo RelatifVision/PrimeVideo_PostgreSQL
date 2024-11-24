@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 DEBUG = False
 #DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME: # Si existe la variable la colocará en su interior
@@ -140,7 +140,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 if not DEBUG:   # El dice a Django que copie staticss a staticfiles
     # En tu dirección de aplicacon en Render
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#   STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     # Activa el WhiteNoise grabando en el BackEnd ocupandose de la compresión de los staticfiles
     # Creando nombres únicos para cada version y puede capturarlo de forma segura para siempre
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

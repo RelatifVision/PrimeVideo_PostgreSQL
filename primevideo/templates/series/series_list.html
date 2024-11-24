@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Tv Series</h2>
+    <div class="row">
+        {% for series in series %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ series.image.url }}" class="card-img-top" alt="{{ series.title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ series.title }}</h5>
+                        <p class="card-text">{{ series.description }}</p>
+                        <a href="{% url 'series_detail' series.id %}" class="btn btn-primary" style="display: inline";>View Series</a>
+                        {% if series.id in watched_series %}
+                        <span>👁️</span>
+                    {% endif %}
+                    {% if series.id in favorite_series %}
+                        <span>⭐</span>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

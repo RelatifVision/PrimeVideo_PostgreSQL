@@ -17,7 +17,6 @@ urlpatterns = [
     path('change_password_user/', views.change_password_user, name='change_password_user'), # CHANGE PASSWORD
     path('update_profile/', views.update_profile, name='update_profile'), # UPDATE PROFILE
     # URLS GENRE 
-    path('genre_list/', views.genre_list, name='genre_list'),  # GENRE LIST
     path('genre/<int:genre_id>/', views.genre_detail, name='genre_detail'),  # GENRE DETAIL
     # URLS MOVIES 
     path('movies/', views.movie_list, name='movie_list'), # MOVIE LIST

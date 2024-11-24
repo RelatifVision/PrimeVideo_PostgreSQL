@@ -12,7 +12,15 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ movie.title }}</h5>
                         <p class="card-text">{{ movie.description }}</p>
-                        <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">View Movie</a>
+                        <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary" style="display: inline;">View Movie</a>
+                        <div class="movie-icons" style="display: inline;">
+                            {% if movie.id in watched_movies %}
+                                <span>👁️</span>
+                            {% endif %}
+                            {% if movie.id in favorite_movies %}
+                                <span>⭐</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -27,7 +35,13 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ series.title }}</h5>
                         <p class="card-text">{{ series.description }}</p>
-                        <a href="{% url 'series_detail' series.id %}" class="btn btn-primary">View Series</a>
+                        <a href="{% url 'series_detail' series.id %}" class="btn btn-primary" style="display: inline";>View Series</a>
+                        {% if series.id in watched_series %}
+                        <span>👁️</span>
+                    {% endif %}
+                    {% if series.id in favorite_series %}
+                        <span>⭐</span>
+                    {% endif %}
                     </div>
                 </div>
             </div>
