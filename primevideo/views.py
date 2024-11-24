@@ -393,14 +393,13 @@ def search(request):
 # _____Funciones Settings_____
 # Función de vista de ajustes 
 def settings_view(request):
-    return render(request, 'settings.html')
+    genres = Genre.objects.all()
+    return render(request, 'settings.html', {'genres': genres})
 
 #_____Funciones Graficos Usuario & Administrador_____
 
 # Función de grafico de contenido visto por usuario, crear función pasar usuarío y te cree gráfica
-@login_required
-def user_content_graph(request):
-    user = request.user
+def content_graph(user):
     watched_movies = UserContentStatus.objects.filter(user=user, watched=True, movie__isnull=False).select_related('movie')
     watched_series = UserContentStatus.objects.filter(user=user, watched=True, series__isnull=False).select_related('series')
 
@@ -423,8 +422,13 @@ def user_content_graph(request):
 
     graphic = base64.b64encode(image_png)
     graphic = graphic.decode('utf-8')
+    return graphic    
 
-    return render(request, 'user_content_graph.html', {'graphic': graphic})
+@login_required
+def user_content_graph(request):
+    graphic = content_graph(request.user)
+    genres = Genre.objects.all()
+    return render(request, 'user_content_graph.html', {'graphic': graphic, 'genres': genres})
 # Función de grafico de contenido visto por administrador, usar la anterior y replicar a all
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -433,29 +437,8 @@ def admin_content_graph(request):
     user_graphics = []
 
     for user in users:
-        watched_movies = UserContentStatus.objects.filter(user=user, watched=True, movie__isnull=False).select_related('movie')
-        watched_series = UserContentStatus.objects.filter(user=user, watched=True, series__isnull=False).select_related('series')
-
-        movie_durations = [status.movie.duration for status in watched_movies]
-        series_durations = [status.series.seasons * status.series.episodes * status.series.duration for status in watched_series]
-
-        total_durations = movie_durations + series_durations
-
-        plt.figure(figsize=(10, 6))
-        plt.hist(total_durations, bins=20, color='blue', edgecolor='black')
-        plt.title(f'Duración de Contenido Visto por {user.username}')
-        plt.xlabel('Duración (minutos)')
-        plt.ylabel('Cantidad de Contenidos')
-
-        buffer = io.BytesIO()
-        plt.savefig(buffer, format='png')
-        buffer.seek(0)
-        image_png = buffer.getvalue()
-        buffer.close()
-
-        graphic = base64.b64encode(image_png)
-        graphic = graphic.decode('utf-8')
-
+        graphic = content_graph(user)
         user_graphics.append({'username': user.username, 'graphic': graphic})
-
-    return render(request, 'admin_content_graph.html', {'user_graphics': user_graphics})
+        
+    genres = Genre.objects.all()
+    return render(request, 'admin_content_graph.html', {'user_graphics': user_graphics, 'genres': genres})
