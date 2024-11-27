@@ -28,18 +28,18 @@
     </div>
     <h2>Tv Shows</h2>
     <div class="row">
-        {% for series in series %}
+        {% for serie in series %}
             <div class="col-md-4">
                 <div class="card mb-4">
-                    <img src="{{ series.image.url }}" class="card-img-top" alt="{{ series.title }}">
+                    <img src="{{ serie.image.url }}" class="card-img-top" alt="{{ serie.title }}">
                     <div class="card-body">
-                        <h5 class="card-title">{{ series.title }}</h5>
-                        <p class="card-text">{{ series.description }}</p>
-                        <a href="{% url 'series_detail' series.id %}" class="btn btn-primary" style="display: inline";>View Series</a>
-                        {% if series.id in watched_series %}
+                        <h5 class="card-title">{{ serie.title }}</h5>
+                        <p class="card-text">{{ serie.description }}</p>
+                        <a href="{% url 'series_detail' serie.id %}" class="btn btn-primary" style="display: inline";>View Series</a>
+                        {% if serie.id in watched_series %}
                         <span>👁️</span>
                     {% endif %}
-                    {% if series.id in favorite_series %}
+                    {% if serie.id in favorite_series %}
                         <span>⭐</span>
                     {% endif %}
                     </div>

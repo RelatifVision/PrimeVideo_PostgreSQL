@@ -80,12 +80,13 @@ TEMPLATES = [
 import os
 
 STATIC_URL = '/static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'primevideo/static'),
 ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/static/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '/staticfiles/media')
 
 
 WSGI_APPLICATION = 'djangocrud.wsgi.application'
@@ -140,7 +141,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 if not DEBUG:   # El dice a Django que copie staticss a staticfiles
     # En tu dirección de aplicacon en Render
-#   STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     # Activa el WhiteNoise grabando en el BackEnd ocupandose de la compresión de los staticfiles
     # Creando nombres únicos para cada version y puede capturarlo de forma segura para siempre
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

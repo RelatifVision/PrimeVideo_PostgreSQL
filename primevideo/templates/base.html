@@ -96,7 +96,7 @@
         }
     </style>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
@@ -116,14 +116,14 @@
                             <a class="nav-link" href="{% url 'movie_list' %}">Movies</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'series_list' %}">TV Series</a>
+                            <a class="nav-link" href="{% url 'series_list' %}">TV Shows</a>
                         </li>
                         {% if user.is_staff %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'create_movie' %}">Add Movie</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'create_series' %}">Add Series</a>
+                                <a class="nav-link" href="{% url 'create_series' %}">Add Tv Shows</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'manage_users' %}">Manage Users</a>
@@ -153,7 +153,7 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton2">
                             <li><h6 class="dropdown-header">Genres</h6></li>
                             {% for genre in genres %}
-                                <li><a class="dropdown-item" href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a></li>
+                                <li><a class="dropdown-item text-body" href="{% url 'genre_detail' genre.id %}">{{ genre.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -164,10 +164,10 @@
                             <i class='bi bi-bookmark-star'></i> 
                         </button> 
                         <ul class='dropdown-menu dropdown-menu-end' aria-labelledby='dropdownMenuButton1'>
-                            <li><h6 class='dropdown-header'>Marcadores</h6></li>
+                            <li><h6 class='dropdown-header'>Bookmarks</h6></li>
                             <li><hr class='dropdown-divider'></li> <!-- Línea divisoria -->
-                            <li><a class='dropdown-item' href="{% url 'favorites' %}">Favoritos</a></li> <!-- Enlace a Favoritos -->
-                            <li><a class='dropdown-item' href="{% url 'watched' %}">Vistos</a></li> <!-- Enlace a vistos -->
+                            <li><a class='dropdown-item text-body' href="{% url 'favorites' %}">Favorites</a></li> <!-- Enlace a Favoritos -->
+                            <li><a class='dropdown-item  text-body' href="{% url 'watched' %}">Watched</a></li> <!-- Enlace a vistos -->
                         </ul> 
                     </div>
                     <!-- Icono de perfil -->
@@ -183,11 +183,11 @@
                                 {% endfor %}
                                 <li><hr class='dropdown-divider'></li>
                                 <!-- Settings and Logout options -->
-                                <li><a class='dropdown-item' href='{% url "settings" %}'>Settings</a></li> 
+                                <li><a class='dropdown-item text-body' href='{% url "settings" %}'>Settings</a></li> 
                                 <!-- Opción de Graphics -->
-                                <li><a class='dropdown-item' href='{% if user.is_staff %}{% url "admin_content_graph" %}{% else %}{% url "user_content_graph" %}{% endif %}'>Graphics</a></li>
+                                <li><a class='dropdown-item text-body' href='{% if user.is_staff %}{% url "admin_content_graph" %}{% else %}{% url "user_content_graph" %}{% endif %}'>Graphics</a></li>
                                 <!-- Logout with redirection to home -->
-                                <li><a class='dropdown-item' href='{% url "signout" %}' onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li> 
+                                <li><a class='dropdown-item text-body' href='{% url "signout" %}' onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li> 
                                 <!-- Hidden form for logout -->
                                 <form id='logout-form' action='{% url "signout" %}' method='POST' style='display:none;'> 
                                     {% csrf_token %} 

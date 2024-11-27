@@ -265,7 +265,10 @@ def delete_movie(request, movie_id):
 def mark_as_watched_movie(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
     user_status, created = UserContentStatus.objects.get_or_create(user=request.user, movie=movie)
-    user_status.watched = True
+    if user_status.watched:
+        user_status.watched = False
+    else:
+        user_status.watched = True
     user_status.save()
     messages.success(request, 'Movie marked as watched!')
     return redirect('movie_detail', movie_id=movie.id)
@@ -275,7 +278,10 @@ def mark_as_watched_movie(request, movie_id):
 def mark_as_favorite_movie(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
     user_status, created = UserContentStatus.objects.get_or_create(user=request.user, movie=movie)
-    user_status.favorite = True
+    if user_status.favorite:
+        user_status.favorite = False
+    else:
+        user_status.favorite = True
     user_status.save()
     messages.success(request, 'Movie marked as favorite!')
     return redirect('movie_detail', movie_id=movie.id)
@@ -357,7 +363,10 @@ def delete_series(request, series_id):
 def mark_as_watched_series(request, series_id):
     series = get_object_or_404(Series, pk=series_id)
     user_status, created = UserContentStatus.objects.get_or_create(user=request.user, series=series)
-    user_status.watched = True
+    if user_status.watched:
+        user_status.watched = False
+    else:
+        user_status.watched = True
     user_status.save()
     messages.success(request, 'Series marked as watched!')
     return redirect('series_detail', series_id=series.id)
@@ -367,7 +376,10 @@ def mark_as_watched_series(request, series_id):
 def mark_as_favorite_series(request, series_id):
     series = get_object_or_404(Series, pk=series_id)
     user_status, created = UserContentStatus.objects.get_or_create(user=request.user, series=series)
-    user_status.favorite = True
+    if user_status.favorite:
+        user_status.favorite = False
+    else:
+        user_status.favorite = True
     user_status.save()
     messages.success(request, 'Series marked as favorite!')
     return redirect('series_detail', series_id=series.id)
@@ -409,6 +421,10 @@ def watched(request):
 # Función de buscador por 
 @login_required
 def search(request):
+    watched_movies = UserContentStatus.objects.filter(user=request.user, watched=True, movie__isnull=False).select_related('movie')
+    watched_series = UserContentStatus.objects.filter(user=request.user, watched=True, series__isnull=False).select_related('series')
+    favorite_movies = UserContentStatus.objects.filter(user=request.user, favorite=True, movie__isnull=False).values_list('movie_id', flat=True)
+    favorite_series = UserContentStatus.objects.filter(user=request.user, favorite=True, series__isnull=False).values_list('series_id', flat=True)
     query = request.GET.get('q')
     genres = Genre.objects.all()
     if query:
@@ -421,6 +437,10 @@ def search(request):
         'movies': movies,
         'series': series,
         'genres': genres,
+        'watched_movies': [status.movie for status in watched_movies],
+        'watched_series': [status.series for status in watched_series],
+        'favorite_movies': favorite_movies,
+        'favorite_series': favorite_series,
         'query': query
     })
     
