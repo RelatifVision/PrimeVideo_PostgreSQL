@@ -57,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
+     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 ROOT_URLCONF = 'djangocrud.urls'
 
@@ -81,9 +83,7 @@ import os
 
 STATIC_URL = '/static/'
 #STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'primevideo/static'),
-]
+
 
 MEDIA_URL = '/static/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '/staticfiles/media')
@@ -95,12 +95,40 @@ WSGI_APPLICATION = 'djangocrud.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+""" DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+#lanzar postgres con docker
+# docket desktop
+docker run --rm --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=myuser -e POSTGRES_DB=whatever -p 5432:5432  -d postgres:17.2-alpine
+
+python manage.py makemigrations
+python manage.py migrate
+
+python manage.py runserver
+
+#load data y dumpdata
+python manage.py loaddata .\data_backup.json
+python manage.py dumpdata > data_backup.json
+#Delete all data and stop container
+docker stop some-postgres
+
+"""
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "whatever",
+        "USER": "myuser",
+        "PASSWORD": "mysecretpassword",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

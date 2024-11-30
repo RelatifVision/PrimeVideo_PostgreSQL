@@ -187,7 +187,25 @@ def genre_detail(request, genre_id):
         'watched_series': watched_series,
         'favorite_series': favorite_series,
     })
-
+ 
+# _____Función crear contenido_____
+def create_content(request, form_class, template_name, success_url, content_type):
+    if request.method == 'POST':
+        form = form_class(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                content = form.save(commit=False)
+                content.save()
+                # TODO: Save images.
+                messages.success(request, f'{content_type} created successfully!')
+                return redirect(success_url)
+            except Exception as e:
+                messages.error(request, f'Error creating {content_type}: {e}')
+        else:
+            messages.error(request, f'Error creating {content_type}. Please correct the errors below.')
+    else:
+        form = form_class()
+    return render(request, template_name, {'form': form})
 # _____Funciones Movie_____
 
 # Función de lista de movies
@@ -207,48 +225,26 @@ def movie_list(request):
 # Función de crear movie
 @login_required
 def create_movie(request):
-    if request.method == 'POST':
-        form = MovieForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                movie = form.save(commit=False)
-                movie.save()
-                messages.success(request, 'Movie created successfully!')
-                return redirect('movie_list')
-            except Exception as e:
-                messages.error(request, f'Error creating movie: {e}')
-        else:
-            messages.error(request, 'Error creating movie. Please correct the errors below.')
-    else:
-        form = MovieForm()
-    return render(request, 'manage_admin/create_content.html', {'form': form})
+    return create_content(
+        request,
+        form_class=MovieForm,
+        template_name='manage_admin/create_content.html',
+        success_url='movie_list',
+        content_type='Movie'
+    )
 
 # Función de detalle de movie
 @login_required
 def movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
     user_status, created = UserContentStatus.objects.get_or_create(user=request.user, movie=movie)
+    genres = Genre.objects.all()  # Obtener todos los géneros
     return render(request, 'movies/movie_detail.html', {
         'movie': movie,
         'watched': user_status.watched,
         'favorite': user_status.favorite,
+        'genres': genres, 
     })
-
-# Función de actualizar movie
-@login_required
-def update_movie(request, movie_id):
-    movie = get_object_or_404(Movie, pk=movie_id)
-    if request.method == 'POST':
-        form = MovieForm(request.POST, request.FILES, instance=movie)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Movie updated successfully!')
-            return redirect('movie_detail', movie_id=movie.id)
-        else:
-            messages.error(request, 'Error updating movie. Please correct the errors below.')
-    else:
-        form = MovieForm(instance=movie)
-    return render(request, 'movies/update_movie.html', {'form': form, 'movie': movie})
 
 # Función de eliminar movie
 @login_required
@@ -305,48 +301,26 @@ def series_list(request):
 # Función de crear series
 @login_required
 def create_series(request):
-    if request.method == 'POST':
-        form = SeriesForm(request.POST, request.FILES)
-        if form.is_valid():
-            try:
-                series = form.save(commit=False)
-                series.save()
-                messages.success(request, 'Series created successfully!')
-                return redirect('series_list')
-            except Exception as e:
-                messages.error(request, f'Error creating series: {e}')
-        else:
-            messages.error(request, 'Error creating series. Please correct the errors below.')
-    else:
-        form = SeriesForm()
-    return render(request, 'manage_admin/create_content.html', {'form': form})
+    return create_content(
+        request,
+        form_class=SeriesForm,
+        template_name='manage_admin/create_content.html',
+        success_url='series_list',
+        content_type='Series'
+    )
 
 # Función de detalle de series
 @login_required
 def series_detail(request, series_id):
     series = get_object_or_404(Series, pk=series_id)
     user_status, created = UserContentStatus.objects.get_or_create(user=request.user, series=series)
+    genres = Genre.objects.all()  # Obtener todos los géneros
     return render(request, 'series/series_detail.html', {
         'series': series,
         'watched': user_status.watched,
         'favorite': user_status.favorite,
+        'genres': genres,  
     })
-
-# Función de actualizar series
-@login_required
-def update_series(request, series_id):
-    series = get_object_or_404(Series, pk=series_id)
-    if request.method == 'POST':
-        form = SeriesForm(request.POST, request.FILES, instance=series)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Series updated successfully!')
-            return redirect('series_detail', series_id=series.id)
-        else:
-            messages.error(request, 'Error updating series. Please correct the errors below.')
-    else:
-        form = SeriesForm(instance=series)
-    return render(request, 'series/update_series.html', {'form': form, 'series': series})
 
 # Función de eliminar series
 @login_required
@@ -484,6 +458,8 @@ def user_content_graph(request):
     graphic = content_graph(request.user)
     genres = Genre.objects.all()
     return render(request, 'graphics/user_content_graph.html', {'graphic': graphic, 'genres': genres})
+
+# Para los administradores
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def admin_content_graph(request):
