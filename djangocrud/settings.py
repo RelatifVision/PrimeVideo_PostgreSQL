@@ -95,7 +95,8 @@ WSGI_APPLICATION = 'djangocrud.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-""" DATABASES = {
+"""
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
@@ -103,27 +104,31 @@ WSGI_APPLICATION = 'djangocrud.wsgi.application'
 }
 #lanzar postgres con docker
 # docket desktop
-docker run --rm --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_USER=myuser -e POSTGRES_DB=whatever -p 5432:5432  -d postgres:17.2-alpine
+docker run --rm --name some-postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -e POSTGRES_DB=PrimeVideo -p 5432:5432  -d postgres:17.2-alpine
 
 python manage.py makemigrations
 python manage.py migrate
 
-python manage.py runserver
+
 
 #load data y dumpdata
-python manage.py loaddata .\data_backup.json
+python manage.py loaddata data_backup.json
 python manage.py dumpdata > data_backup.json
+
 #Delete all data and stop container
 docker stop some-postgres
 
+python manage.py runserver
+
 """
+DEFAULT_CHARSET = 'utf-8'
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "whatever",
-        "USER": "myuser",
-        "PASSWORD": "mysecretpassword",
+        "NAME": "PrimeVideo",
+        "USER": "admin",
+        "PASSWORD": "admin",
         "HOST": "localhost",
         "PORT": "5432",
     }
@@ -152,11 +157,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 

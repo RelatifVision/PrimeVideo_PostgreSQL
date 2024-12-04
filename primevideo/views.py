@@ -205,7 +205,7 @@ def create_content(request, form_class, template_name, success_url, content_type
             messages.error(request, f'Error creating {content_type}. Please correct the errors below.')
     else:
         form = form_class()
-    return render(request, template_name, {'form': form})
+    return render(request, template_name, {'form': form, 'content_type': content_type})
 # _____Funciones Movie_____
 
 # Función de lista de movies
@@ -306,7 +306,7 @@ def create_series(request):
         form_class=SeriesForm,
         template_name='manage_admin/create_content.html',
         success_url='series_list',
-        content_type='Series'
+        content_type='Tv Shows'
     )
 
 # Función de detalle de series
