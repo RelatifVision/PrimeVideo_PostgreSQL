@@ -1,66 +1,103 @@
-Manual de instalación
-______________________
+# PrimeVideo
 
-1.  Clonar el repositorio•	
-•	git clone https://github.com/RelatifVision/PrimeVideo_PostgreSQLgit
-•	cd <<ruta/tu/repositorio>>
+> A Django-based streaming catalogue application with full PostgreSQL integration and Docker-based local development setup.
 
+---
 
-2.  Instalar Docker
-   
-3.  Creamos y activamos Entorno Virtual
-•	Crear Entorno Virtual
-•	python -m venv env
-•	  Activar entorno Virtual
-•	env\Scripts\activate.# CMD
-•	source env/bin/actívate # macOS/Linux
+## Overview
 
-4.  Instalar las Dependencias
-•	Instalar las dependencias listadas en el archivo ‘requirements.txt’
-•	pip install -r  requirements.txt
+PrimeVideo is a web application that replicates core catalogue and user management features of a streaming platform. Built with Django and backed by PostgreSQL, it demonstrates full-stack development practices including containerised database setup, ORM-based data modelling, and Django admin management.
 
-5.  Configurar en el archivo settings.py de tu proyecto, localiza la sección DATABASES y modifícala para usar PostgreSQL
+---
 
-•	DATABASES = {
-o	‘default’: {
-	‘ENGINE’: ‘django.db.backends.postgresql’,
-	‘NAME’: ‘PrimeVideo’,
-	‘USER’: ‘admin
-	‘PASSWORD’: ‘admin’,
-	‘HOST’: ‘localhost’, 
-	‘PORT’: ‘5432’
-}
-}
+## Tech Stack
 
-6.	Ejecutar Docker
-•	 Levantar PostgreSQL en el CMD
-docker  run --rm --name some-postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -e POSTGRES_DB=PrimeVideo -p 5432:5432  -d postgres:17.2-alpine
+| Layer | Technology |
+|---|---|
+| Backend | Django 4.x |
+| Database | PostgreSQL 17 (via Docker) |
+| Containerisation | Docker |
+| Auth | Django built-in auth |
+| Admin | Django Admin |
 
-7. Aplicar Migraciones (Terminal)
-•	python manage.py makemigration
-•	python manage.py migrate
+---
 
-8. Cargar datos y guardar modificaciones:
-•	Importar base de datos
-•	python manage.py loaddata .\data_backup.json
-•	Actualizar modificaciones
-•	python manage.py loaddata .\data_backup.json
+## Installation
 
-9. Admin y usuarios:
-•	Si no, tienes estos user puedes registrarte o usar estis pass que son admin:
-o	admin    4dM1Ni57r@D0
-o	javi95   2295
+### 1. Clone the repository
+```bash
+git clone https://github.com/RelatifVision/PrimeVideo_PostgreSQL
+cd PrimeVideo_PostgreSQL
+```
 
-•	Y los usuarios ya creados con su pass:
-o	joe3  joe3
-o	12341234
+### 2. Create and activate virtual environment
+```bash
+python -m venv venv
+source venv/bin/activate       # macOS/Linux
+venv\Scripts\activate          # Windows CMD
+```
 
-10.  Ejecutar el Servidor de Desarrollo:
-•	Inicia el servidor de desarrollo para verificar que todo funcione correctamente.
-•	python manage.py runserver (terminal)
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-12.  Cerrar o parar el server del database
-•	Inicia el servidor de desarrollo para verificar que todo funcione correctamente.
-•	docker stop some-postgres
+### 4. Configure environment variables
 
-PD: es una prueba la página Home de momento es una imagen fija pero acabará previsualizandose como el resto con ese tipo de miniaturas
+Create a `.env` file in the project root based on `.env.example`:
+
+```
+SECRET_KEY=<your_django_secret_key>
+DEBUG=True
+DATABASE_URL=postgres://admin:admin@localhost:5432/PrimeVideo
+```
+
+### 5. Start PostgreSQL with Docker
+```bash
+docker run --rm --name primevideo-db \
+  -e POSTGRES_PASSWORD=admin \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_DB=PrimeVideo \
+  -p 5432:5432 \
+  -d postgres:17-alpine
+```
+
+### 6. Apply migrations
+```bash
+python manage.py migrate
+```
+
+### 7. Load sample data
+```bash
+python manage.py loaddata data_backup.json
+```
+
+### 8. Run the development server
+```bash
+python manage.py runserver
+```
+
+### 9. Stop the database container
+```bash
+docker stop primevideo-db
+```
+
+---
+
+## Project Status
+
+> ⚠️ **Development only** — production deployment (Gunicorn + Nginx) not yet configured.
+
+---
+
+## Roadmap
+
+- [ ] Production deployment with Gunicorn + Nginx
+- [ ] REST API with Django REST Framework
+- [ ] Recommendation engine integration
+
+---
+
+## Author
+
+**RelatifVision** — [github.com/RelatifVision](https://github.com/RelatifVision)
